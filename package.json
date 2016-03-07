@@ -1,0 +1,7 @@
+{
+  "name": "asciiflut",
+  "version": "0.0.1",
+  "dependencies": {
+    "blessed": "0.1.x"
+  }
+}

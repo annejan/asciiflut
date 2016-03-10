@@ -2,6 +2,8 @@
 
 __Terminal only__ [pixelflut](https://github.com/defnull/pixelflut) clone
 
+[[http://i.imgur.com/MeZ0ThC.jpg|alt=screenshot]]
+
 ## Install
 ```bash
 git clone https://github.com/nooitaf/asciiflut

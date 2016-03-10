@@ -2,7 +2,7 @@
 
 __Terminal only__ [pixelflut](https://github.com/defnull/pixelflut) clone
 
-[[http://i.imgur.com/MeZ0ThC.jpg|alt=screenshot]]
+<img src="http://i.imgur.com/MeZ0ThC.jpg" alt="screenshot.jpg">
 
 ## Install
 ```bash

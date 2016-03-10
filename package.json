@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "name": "asciiflut",
     "version": "0.0.1",
     "description": "Pixelflut display server clone in ascii",
@@ -11,15 +10,7 @@
     },
     "dependencies": {
         "blessed": "*",
-        "fps":"*"
+        "fps": "*"
     },
     "license": "MIT"
 }
-=======
-  "name": "asciiflut",
-  "version": "0.0.1",
-  "dependencies": {
-    "blessed": "0.1.x"
-  }
-}
->>>>>>> FETCH_HEAD

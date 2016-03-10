@@ -8,22 +8,28 @@ git clone https://github.com/nooitaf/asciiflut
 cd asciiflut
 npm install
 ```
-## Run
+## Start Server
 ```bash
 node server.js
 ```
-Check ip's and port, no settings yet
+## Run a Client
+```bash
+cd examples
+node square.js
+```
+Check ip's,ports and canvas sizes,  
+no settings or autodetects yet
 
-Message format:
+### Note:
+Fluters you already used for pixelflut should work too.  
+Asciifluter accepts 2 more values, a character and a foreground-color.
+
+### Message format:
 ```
 PX 43 24 FF0000 X 00FF00
 
 [COMMAND] [X] [Y] [BGCOLOR] [ASCIICHAR] [FGCOLOR]
 ```
-
-### Note:
-Fluters you already used for pixelflut should work too.  
-Asciifluter accepts 2 more values, a character and a foreground-color.
 
 ### Todo
 - implement missing pixelflut commands

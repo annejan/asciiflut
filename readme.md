@@ -14,10 +14,11 @@ node server.js
 ```
 Check ip's and port, no settings yet
 
-Pixel format:
+Message format:
 ```
-[COMMAND] [X] [Y] [BGCOLOR] [ASCIICHAR] [FGCOLOR]
 PX 43 24 FF0000 X 00FF00
+
+[COMMAND] [X] [Y] [BGCOLOR] [ASCIICHAR] [FGCOLOR]
 ```
 
 ### Todo

@@ -10,7 +10,9 @@
     },
     "dependencies": {
         "blessed": "*",
-        "fps": "*"
+        "fps": "*",
+        "net":"*",
+        "canvas":"*"
     },
     "license": "MIT"
 }

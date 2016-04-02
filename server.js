@@ -1,3 +1,10 @@
+// TODO:
+// =========================
+// - resize event
+// - give size back 
+//
+
+
 var blessed = require('blessed');
 
 // Create a screen object.
@@ -17,7 +24,7 @@ var screen = blessed.screen({
 function renderLoop() {
     screen.render()
     // blackRender()
-        // ticker.tick()
+    ticker.tick()
 }
 
 setInterval(renderLoop, 1000 / 30)
@@ -105,7 +112,7 @@ function setPixelBufferWithPixel(pixel) {
 function updatePixelWithString(str) {
     var params = str.toString().split(' ')
         // console.log(params)
-    if (params && params.length >= 4) {
+    if (params && params.length >= 4 && params.length <= 6) {
         var f = params[0].toString()
         var x = parseInt(params[1]) - 1
         var y = parseInt(params[2]) - 1
@@ -113,7 +120,7 @@ function updatePixelWithString(str) {
         if (params.length === 4){
             updatePixel(x, y, bgcolor)
         } else {
-            var fgcolor = '#' + params[5].toString()
+            var fgcolor = '#' + String(params[5])
             var content = params[4] && params[4].toString() || ''
             updatePixel(x, y, bgcolor, content, fgcolor)
         }
@@ -129,9 +136,9 @@ var info = blessed.element({
         left: 0,
         width: '100%',
         height: 1,
-        content: 'asciiflut 127.0.0.1:7777',
+        content: 'asciiflut 192.168.1.99:1234',
         style: {
-            bg: '#FFFFFF',
+            bg: '#666666',
             fg: '#000000'
         }
     })
@@ -144,22 +151,23 @@ var server = net.createServer(function(socket) {
     // socket.end('goodbye\n');
     socket.on('error', function(err) {
         // handle errors here
-        console.log(err)
-        throw err;
+        // console.log(err)
+        // throw err;
     });
     socket.on('data', function(data) {
-        var packets = data.toString().split('\n')
-        for (var i = 0; i < packets.length; i++) {
-            updatePixelWithString(packets[i])
+        if (data) {
+            var packets = data.toString().split('\n')
+            for (var i = 0; i < packets.length; i++) {
+                updatePixelWithString(packets[i])
+            }
         }
-        screen.render()
     });
 
 })
 
 server.listen({
     port: 1234,
-    host: 'localhost'
+    host: '0.0.0.0'
 }, function() {
     address = server.address();
     console.log('opened server on %j', address);
@@ -232,32 +240,34 @@ function randomColor() {
 
 // var overlay = blessed.element({
 //     parent: screen,
+//     right: 0,
 //     top: 0,
-//     left: 0,
-//     width: '100%',
+//     width: 3,
 //     height: 1,
 //     style: {
-//         fg: 'white',
-//         bg: 'red'
+//         fg: 'red',
+//         bg: 'black'
 //     },
 //     index: 2
 // })
 
-// var fps = require('fps')
-// var ticker = fps({
-//     every: 10 // update every 10 frames 
-// })
-// var fpsInfo = blessed.element({
-//     parent: overlay,
-//     top: 0,
-//     left: 0,
-//     content: 'FPS'
-// })
-// ticker.on('data', function(framerate) {
-//     // console.log('dataaa',framerate)
-//     fpsInfo.setContent(String(parseInt(framerate)))
-//     screen.render()
-// })
+var fps = require('fps')
+var ticker = fps({
+    every: 10 // update every 10 frames 
+})
+var fpsInfo = blessed.element({
+    parent: screen,
+    right: 0,
+    top: 0,
+    width: 3,
+    height: 1,
+    content: 'FPS'
+})
+ticker.on('data', function(framerate) {
+    // console.log('dataaa',framerate)
+    fpsInfo.setContent(String(parseInt(framerate)))
+    // screen.render()
+})
 
 
 

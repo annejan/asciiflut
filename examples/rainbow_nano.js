@@ -1,9 +1,9 @@
 // canvas 
 var canvasWidth = 64  // width
 var canvasHeight = 32   // height
-var squareSize = 3
-var colorRandomFactor = 40
-var jumpFactor = 1 //0.95
+var squareSize = 1
+var colorRandomFactor = 10
+var jumpFactor = 0.85 //0.95
 px = parseInt(Math.floor(Math.random() * canvasWidth))
 py = parseInt(Math.floor(Math.random() * canvasHeight))
 hr = 0
@@ -18,20 +18,20 @@ client.connect(1234, '192.168.1.99', function() {
     console.log('Connected');
     // random start positions
     // render loop
-    setInterval(renderLoop, 1000/15)
-});
+    setInterval(renderLoop, 1000/30)
+})
 
 client.on('data', function(data) {
     console.log('Received: ' + data);
     client.destroy(); // kill client after server's response
-});
+})
 
 client.on('error', function(err) {
     console.log(err)
 })
 client.on('close', function() {
     console.log('Connection closed');
-});
+})
 
 
 renderLoop = function() {
@@ -60,8 +60,8 @@ renderLoop = function() {
             var x = Math.round(px + i)
             var y = Math.round(py + k)
                 //             PX     X         Y     BGCOLOR CHAR FGCOLOR █▓▒░┘
-            var command = 'PX ' + x + ' ' + y + ' 000000 / ' + rr + rb + rg + '\n';
-            // var command = 'PX ' + x + ' ' + y + ' ' + rr + rb + rg + '   000000\n';
+            var command = 'PX ' + x + ' ' + y + ' 000000 : ' + rr + rb + rg + '\n';
+            // var command = 'PX ' + x + ' ' + y + ' ' + rr + rb + rg + '\n';
             // var command = 'PX ' + x + ' ' + y + ' 000000 0 ff0000\n';
             client.write(command);
         }

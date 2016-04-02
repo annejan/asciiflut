@@ -1,13 +1,13 @@
 
 var net = require('net');
-var cw = 57
-var ch = 17
-var squareSize = 7
+var cw = 64
+var ch = 32
+var squareSize = 3
 
 
 
 var client = new net.Socket();
-client.connect(1234, 'localhost', function() {
+client.connect(1234, '192.168.1.99', function() {
   console.log('Connected');
   px = parseInt(Math.floor(Math.random()*cw))
   py = parseInt(Math.floor(Math.random()*ch))

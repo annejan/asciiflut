@@ -9,7 +9,11 @@ var blessed = require('blessed');
 
 // Create a screen object.
 var screen = blessed.screen({
-    smartCSR: false,
+    // smartCSR: true,
+    // fastCSR: true,
+    // useBCE: true,
+    // terminal: 'xterm-256color',
+    // fullUnicode: true,
     title: 'ascii-flut',
     style: {
         fg: 'black',
@@ -23,7 +27,10 @@ var screen = blessed.screen({
 
 function renderLoop() {
     screen.render()
-    // blackRender()
+    // console.log(pixelBuffer)
+
+    screen.log(pixelBuffer[0].children.length)
+        // blackRender()
     ticker.tick()
 }
 
@@ -61,15 +68,16 @@ function numbersRender() {
             var g = '00'
             var b = '00'
             var color = '#' + String(r) + String(g) + String(b)
-            // console.log(row)
+                // console.log(row)
             var rowChar = String(row).split('').pop()
             var colChar = String(col).split('').pop()
-            if (!row) 
+            if (!row)
                 rowChar = colChar
             updatePixel(col, row, color, rowChar)
         }
     }
 }
+
 
 function createPixel(x, y, bgcolor, content, fgcolor) {
     var pixel = blessed.element({
@@ -78,13 +86,33 @@ function createPixel(x, y, bgcolor, content, fgcolor) {
         left: x,
         width: 1,
         height: 1,
+        invisible: false,
+        transparent: false,
         content: content || '',
+        index:10,
         style: {
+            bold: true,
             bg: bgcolor || '#000000',
             fg: fgcolor || '#000000'
         }
     })
     setPixelBufferWithPixel(pixel)
+}
+
+var hexToRGB = function(hex) {
+  if (hex.length === 4) {
+    hex = hex[0]
+      + hex[1] + hex[1]
+      + hex[2] + hex[2]
+      + hex[3] + hex[3];
+  }
+
+  var col = parseInt(hex.substring(1), 16)
+    , r = (col >> 16) & 0xff
+    , g = (col >> 8) & 0xff
+    , b = col & 0xff;
+
+  return [r, g, b];
 }
 
 function updatePixel(x, y, bgcolor, content, fgcolor) {
@@ -100,11 +128,21 @@ function updatePixel(x, y, bgcolor, content, fgcolor) {
     if (!pixel) {
         createPixel(x, y, bgcolor, content, fgcolor)
     } else {
-        if (bgcolor) pixel.style.bg = bgcolor
+        screen.log(bgcolor)
+        if (bgcolor) {
+            // var bgRGB = hexToRGB(bgcolor)
+            
+            // if (bgRGB) {
+            //     pixel.style.bg = 'rgba('+bgRGB[0]+','+bgRGB[1]+','+bgRGB[2]+',100)'
+            // } 
+            pixel.style.bg = bgcolor
+        }
         if (fgcolor) pixel.style.fg = fgcolor
         if (content) pixel.setContent(content)
-        if (content==='clear') pixel.setContent('')
+        if (content === 'clear') pixel.setContent('')
+        // screen.log(x, y, bgcolor, content, fgcolor, pixel.style)
     }
+    
 }
 
 function getPixelBufferWithCoords(x, y) {
@@ -123,10 +161,10 @@ function updatePixelWithString(str) {
         var f = params[0].toString()
         var x = parseInt(params[1])
         var y = parseInt(params[2])
-        if (x>=screen.cols||y>=screen.rows||x<0||y<0) return
+        if (x >= screen.cols || y >= screen.rows || x < 0 || y < 0) return
         if (f === "PX") {
-            var bgcolor = '#' + params[3].toString()
-            if (params.length === 4){
+            var bgcolor = String(params[3]) ? '#' + String(params[3]) : false
+            if (params.length === 4) {
                 updatePixel(x, y, bgcolor, false, false)
             } else {
                 var content = String(params[4]) || false
@@ -148,18 +186,18 @@ function updatePixelWithString(str) {
 blackRender()
 
 var info = blessed.element({
-        parent: screen,
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: 1,
-        content: 'asciiflut 0.0.0.0:1234',
-        index:5,
-        style: {
-            bg: '#666666',
-            fg: '#ffffff'
-        }
-    })
+    parent: screen,
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: 1,
+    content: 'asciiflut 0.0.0.0:1234',
+    index: 5,
+    style: {
+        bg: '#272727',
+        fg: '#262626'
+    }
+})
 
 
 
@@ -178,9 +216,9 @@ var server = net.createServer(function(socket) {
             for (var i = 0; i < packets.length; i++) {
                 updatePixelWithString(packets[i])
             }
-            server.getConnections(function(err,count){
+            server.getConnections(function(err, count) {
                 if (!err && count) {
-                    info.setContent('asciiflut %j:1234 Connections:' + count, server.address().address)
+                    info.setContent('asciiflut '+server.address().address+':1234 Connections:' + count)
                 }
             })
         }
@@ -194,32 +232,15 @@ server.listen({
 }, function() {
     address = server.address();
     console.log('opened server on %j', address);
+    // Render the screen.
+    screen.render();
+    info.setContent('asciiflut '+server.address().address+':1234')
 });
-
-
-
-
-
-
-
-
-
-
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
-
-// Render the screen.
-screen.render();
-
-
-
-
-
-// "libs"
-
 
 
 function randomHex() {
@@ -237,42 +258,6 @@ function randomColor() {
     return '#' + r + g + b
 
 }
-
-
-
-
-
-
-
-
-// test stuff
-
-
-// Add a png icon to the box
-// var icon = blessed.image({
-//     parent: screen,
-//     top: '20%',
-//     left: '20%',
-//     type: 'ansi',
-//     width: '60%',
-//     height: '60%',
-//     file: __dirname + '/splash.png',
-//     search: false
-// });
-
-
-// var overlay = blessed.element({
-//     parent: screen,
-//     right: 0,
-//     top: 0,
-//     width: 3,
-//     height: 1,
-//     style: {
-//         fg: 'red',
-//         bg: 'black'
-//     },
-//     index: 2
-// })
 
 var fps = require('fps')
 var ticker = fps({
@@ -293,7 +278,7 @@ var fpsInfo = blessed.element({
 ticker.on('data', function(framerate) {
     // console.log('dataaa',framerate)
     fpsInfo.setContent(String(parseInt(framerate)))
-    // screen.render()
+        // screen.render()
 })
 
 
@@ -302,3 +287,102 @@ ticker.on('data', function(framerate) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var http = require('http'),
+    path = require('path'),
+    url = require('url'),
+    Canvas = require('canvas'),
+    fs = require('fs'),
+    stream = require('stream')
+
+var passThrough = new stream.PassThrough()
+
+renderRate = 1000 / 0.5
+renderInterval = null
+
+scaleFactor = 10
+cw = 64
+ch = 32
+
+canvas = new Canvas(cw*scaleFactor, ch*scaleFactor)
+ctx = canvas.getContext('2d')
+var config = {
+    port: 1235
+}
+
+  // style: { bg: '#007256', fg: '#000000' },
+  // content: '',
+
+function renderedImage() {
+    ctx.save();
+    ctx.translate(0, 0);
+    for (var row = 0; row < ch; row++){
+        for (var col = 0; col < cw; col++){
+            var pixel = getPixelBufferWithCoords(col,row)
+            var bg = pixel.style.bg
+            var fg = pixel.style.fg
+            var content = pixel.content || ''
+            
+            ctx.fillStyle = bg;
+            ctx.fillRect( col*scaleFactor, row*scaleFactor, 1*scaleFactor, 1*scaleFactor )
+
+            // ctx.strokeStyle = fg;
+            ctx.font = "10pt verdana";
+            ctx.fillStyle = fg;
+            ctx.fillText(content, col*scaleFactor, row*scaleFactor);
+        }
+    }
+    ctx.restore()
+    return canvas.toBuffer()
+}
+
+var maxFPS = 30
+var lastFile = null
+var lastFileLength = 0
+
+var boundary = 'harkharkharkharkharkharkharkharkharkharkharkhark';
+
+
+
+http.createServer(function(req, res) {
+    var uri = url.parse(req.url).pathname;
+    if (uri == '/img.mjpeg') {
+        res.useChunkedEncodingByDefault = false;
+        res.writeHead(200, { 'Content-type': 'multipart/x-mixed-replace; boundary=--' + boundary }, { 'Cache-Control': 'no-cache' }, { 'Connection': 'keep-alive' }, { 'Pragma': 'no-cache' });
+        var updateLoop = setInterval(function() {
+            parseBuffer(res, 'img.mjpeg')
+        }, 1000 / maxFPS);
+        res.on('close', function() {
+            clearInterval(updateLoop);
+        });
+    } else {
+        res.writeHead(200, { 'Content-type': 'text/html' });
+        res.end('<html><body style="width:100%;height:100%;padding:0px;margin:0px;background:black;"><img src="/img.mjpeg" style="width:100%;height:auto;"></body></html>');
+    }
+}).listen(config.port);
+
+var parseBuffer = function(res, imgpath) {
+    var imgbuffer = renderedImage();
+    if (imgbuffer.length > 10) {
+        res.write('Content-Type: image/jpeg\r\nContent-Length: ' + (imgbuffer.length) + '\r\n\r\n');
+        res.write(imgbuffer);
+        res.write('\r\n--' + boundary + '\r\n');
+    } else {
+        console.log('dropped')
+    }
+}
+
+console.log('listening on port ' + config.port);

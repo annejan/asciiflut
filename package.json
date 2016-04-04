@@ -12,7 +12,8 @@
         "blessed": "*",
         "fps": "*",
         "net":"*",
-        "canvas":"*"
+        "canvas":"*",
+        "stream":"*"
     },
     "license": "MIT"
 }

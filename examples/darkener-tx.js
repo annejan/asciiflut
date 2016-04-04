@@ -1,7 +1,7 @@
 // canvas 
 var canvasWidth = 64  // width
 var canvasHeight = 32   // height
-var squareSize = 1
+var squareSize = 2
 var colorRandomFactor = 40
 var jumpFactor = 0.95 //0.95
 px = parseInt(Math.floor(Math.random() * canvasWidth))
@@ -41,7 +41,7 @@ renderLoop = function() {
             var x = Math.round(px + i)
             var y = Math.round(py + k)
                 //             PX     X         Y     BGCOLOR CHAR FGCOLOR █▓▒░┘
-            var command = 'PX ' + x + ' ' + y + ' 000000 . 222222\n';
+            var command = 'TX ' + x + ' ' + y + ' false\n';
             client.write(command);
         }
     }

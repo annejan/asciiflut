@@ -32,7 +32,7 @@ client.connect(1234, '192.168.1.99', function() {
     renderInterval = setInterval(function() {
         getFile()
         render()
-    }, 1000/15)
+    }, 1000/1)
     // client.destroy()
 });
 

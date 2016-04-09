@@ -14,7 +14,7 @@ hb = 0
 
 var net = require('net');
 var client = new net.Socket();
-client.connect(1234, '0.0.0.0', function() {
+client.connect(1234, '192.168.1.99', function() {
     console.log('Connected');
     // random start positions
     // render loop

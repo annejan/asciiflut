@@ -6,7 +6,7 @@ var net = require('net');
 var client = new net.Socket();
 client.connect(1234, '192.168.1.99', function() {
     console.log('Connected');
-    setInterval(renderLoop, 1000/3)
+    setInterval(renderLoop, 1000/30)
 })
 
 client.on('data', function(data) {
